@@ -1,5 +1,5 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {useRouter} from 'next/router'
 import appConfig from '../config.json'
 
@@ -36,8 +36,25 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
   //const username = 'kishica';
-  const [username, setUsername] = React.useState('kishica')
+  const [username, setUsername] = useState('kishica')
+  const [imgVisible, setImgVisible] = React.useState(true);
+  const [usernameData, setUsernameData] = useState({ followers: 0, name: '' })
   const router = useRouter()
+
+  useEffect(() => {    
+
+    fetch(`https://api.github.com/users/${username}`)
+    .then(res => {
+      if (res.ok) return res.json()
+    })
+    .then(data => {
+      if (data) {        
+        setUsernameData(data)
+        setImgVisible(username.length > 2)        
+      }
+    })    
+
+  }, [username])
 
   return (
     <>
@@ -97,6 +114,7 @@ export default function PaginaInicial() {
                 console.log('Usuário digitou', event.target.value)
                 const valor = event.target.value                
                 setUsername(valor)
+                //setImgVisible(valor.length > 2)
               }}            
               fullWidth
               textFieldColors={{
@@ -108,7 +126,7 @@ export default function PaginaInicial() {
                 },
               }}
             />
-            <Button
+            <Button              
               type='submit'
               label='Entrar'
               fullWidth
@@ -139,7 +157,10 @@ export default function PaginaInicial() {
               minHeight: '240px',
             }}
           >
-            <Image
+            {imgVisible && (
+              <>
+
+              <Image
               styleSheet={{
                 borderRadius: '50%',
                 marginBottom: '16px',
@@ -155,8 +176,24 @@ export default function PaginaInicial() {
                 borderRadius: '1000px'
               }}
             >
-              {username}
+              <h3>{username}</h3>              
             </Text>
+            <Text
+              variant="body4"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals[200],
+                backgroundColor: appConfig.theme.colors.neutrals[900],
+                padding: '3px 10px',
+                borderRadius: '1000px',
+                textAlign: 'center'
+              }}            
+            >
+              <h3>{usernameData.name}</h3>
+              <h4>{' ' + usernameData.followers + ' followers'}</h4>
+            </Text>
+              </>
+            )}
+
           </Box>
           {/* Photo Area */}
         </Box>

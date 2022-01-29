@@ -87,7 +87,7 @@ export default function PaginaInicial() {
             onSubmit={function(event){
               event.preventDefault()
               console.log('Alguém submeteu o form')
-              router.push('/chat')
+              router.push(`/chat?username=${username}`)
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
